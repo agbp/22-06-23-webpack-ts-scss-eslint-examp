@@ -1,0 +1,18 @@
+{
+	"name": "22-06-23-webpack-ts-scss-eslint-examp",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"type": "module",
+	"private": true,
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"keywords": [],
+	"author": {
+		"name": "Andrey Golovin",
+		"email": "Andrey.L.Golovin@gmail.com",
+		"url": "https://alango.pro/"
+	},
+	"license": "UNLICENSED"
+}
