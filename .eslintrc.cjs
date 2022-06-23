@@ -29,5 +29,6 @@ module.exports = {
 		// note you must disable the base rule as it can report incorrect errors
 		'no-shadow': 'off',
 		'@typescript-eslint/no-shadow': ['error'],
+		'no-console': ['error', { allow: ['warn', 'error'] }],
 	},
 };
