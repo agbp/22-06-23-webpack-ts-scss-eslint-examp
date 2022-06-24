@@ -2,11 +2,12 @@
 	"name": "22-06-23-webpack-ts-scss-eslint-examp",
 	"version": "1.0.0",
 	"description": "",
-	"main": "index.js",
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"lint": "eslint . --cache",
+		"fix": "eslint . --fix"
 	},
 	"keywords": [],
 	"author": {
@@ -20,6 +21,7 @@
 		"@typescript-eslint/parser": "^5.29.0",
 		"eslint": "^8.18.0",
 		"eslint-config-airbnb-base": "^15.0.0",
+		"eslint-config-airbnb-typescript": "^17.0.0",
 		"eslint-plugin-import": "^2.26.0",
 		"typescript": "^4.7.4"
 	}

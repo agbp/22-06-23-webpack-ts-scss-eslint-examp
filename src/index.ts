@@ -1,6 +1,6 @@
 import './styles/index.scss';
 
-enum operationId {
+enum OperationId {
 	plus = 10,
 	minus = 20,
 	multiply = 30,
@@ -17,28 +17,28 @@ enum operationId {
 	oneDivX = 140,
 }
 
-interface operationInterface {
-	id: operationId;
+interface OperationInterface {
+	id: OperationId;
 	arity: number;
 	bittonId: string;
 	representation: string;
 	action: (...args: number[]) => number;
 }
 
-interface stackElement {
-	operation: operationInterface;
+interface StackElement {
+	operation: OperationInterface;
 	operands: number[];
 	result: number;
 }
 
-interface calculatorInterface {
+interface CalculatorInterface {
 	inputElement: HTMLInputElement;
 	historyDiv: HTMLDivElement;
 	scientificDiv: HTMLDivElement;
 	historyList: HTMLUListElement;
 	historyListData: string[];
-	stack: (number | operationId)[];
-	operations: operationInterface[];
+	stack: (number | OperationId)[];
+	operations: OperationInterface[];
 	waiting4NewNumber: boolean;
 	historyOpened: boolean;
 	scientificOpened: boolean;
@@ -48,12 +48,12 @@ interface calculatorInterface {
 	addActionToButtonClick: (buttonId: string, action: () => void) => void;
 	addInputToButtonClick: (
 		buttonId: string,
-		input: string | operationId
+		input: string | OperationId
 	) => void;
 	addEventsToDigitButtons: () => void;
-	addDigitOrOperation: (digit: string | operationId) => void;
+	addDigitOrOperation: (digit: string | OperationId) => void;
 	initOperations: () => void;
-	addToHistoryList: (arg: string, initialization: boolean) => void;
+	addToHistoryList: (arg: string, initialization?: boolean) => void;
 	getHistoryList: () => void;
 	saveHistoryList: () => void;
 	init: () => void;
@@ -68,7 +68,7 @@ function getCookie(name: string) {
 	return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-const calculator: calculatorInterface = {
+const calculator: CalculatorInterface = {
 	inputElement: document.getElementById('calc_input') as HTMLInputElement,
 	historyDiv: document.getElementById('calc_history') as HTMLDivElement,
 	scientificDiv: document.getElementById('calc_scientific') as HTMLDivElement,
@@ -104,21 +104,21 @@ const calculator: calculatorInterface = {
 		this.historyListData.push(arg);
 		this.saveHistoryList();
 	},
-	addDigitOrOperation(input: string | operationId) {
-		if (input in operationId) {
+	addDigitOrOperation(input: string | OperationId) {
+		if (input in OperationId) {
 			// is operation button pressed ?
 			const currOperation = this.operations.find(
-				(el: operationInterface) => el.id === input,
+				(el: OperationInterface) => el.id === input,
 			);
 			let result = NaN;
 			if (this.stack.length) {
 				// there is data to be calculated
-				const opId = this.stack.pop() as operationId;
+				const opId = this.stack.pop() as OperationId;
 				const operation = this.operations.find(
-					(el: operationInterface) => el.id === opId,
+					(el: OperationInterface) => el.id === opId,
 				);
 				const operands: number[] = [];
-				for (let i = 1; i < operation?.arity ?? 0; i += 1) {
+				for (let i = 1; i < (operation?.arity ?? 0); i += 1) {
 					operands.push(this.stack.pop() as number);
 				}
 				operands.push(Number(this.inputElement.value));
@@ -128,14 +128,14 @@ const calculator: calculatorInterface = {
 			} else {
 				result = Number(this.inputElement.value);
 			}
-			if (currOperation.arity === 1) {
+			if (currOperation?.arity === 1) {
 				// no need to push in stack, just calculate right now
 				result = currOperation?.action(Number(this.inputElement.value)) ?? NaN;
 				this.addToHistoryList(`${currOperation.representation}(${this.inputElement.value})=${result}`);
 				this.inputElement.value = String(result);
-			} else if (currOperation.arity > 1) {
+			} else if ((currOperation?.arity ?? 0) > 1) {
 				this.stack.push(result);
-				this.stack.push(input as operationId);
+				this.stack.push(input as OperationId);
 			}
 			this.waiting4NewNumber = true;
 		} else {
@@ -221,22 +221,22 @@ const calculator: calculatorInterface = {
 					this.addDigitOrOperation(event.key);
 					break;
 				case '+':
-					this.addDigitOrOperation(operationId.plus);
+					this.addDigitOrOperation(OperationId.plus);
 					break;
 				case '-':
-					this.addDigitOrOperation(operationId.minus);
+					this.addDigitOrOperation(OperationId.minus);
 					break;
 				case '*':
-					this.addDigitOrOperation(operationId.multiply);
+					this.addDigitOrOperation(OperationId.multiply);
 					break;
 				case '/':
-					this.addDigitOrOperation(operationId.divide);
+					this.addDigitOrOperation(OperationId.divide);
 					break;
 				case '=':
-					this.addDigitOrOperation(operationId.equal);
+					this.addDigitOrOperation(OperationId.equal);
 					break;
 				case '%':
-					this.addDigitOrOperation(operationId.percent);
+					this.addDigitOrOperation(OperationId.percent);
 					break;
 				default:
 					switch (event.keyCode) {
@@ -287,104 +287,104 @@ const calculator: calculatorInterface = {
 	},
 	initOperations() {
 		this.operations.push({
-			id: operationId.equal,
+			id: OperationId.equal,
 			bittonId: 'btn_equal',
 			arity: 0,
 			action: (a: number, b: number) => NaN,
 			representation: '=',
 		});
 		this.operations.push({
-			id: operationId.plus,
+			id: OperationId.plus,
 			bittonId: 'btn_plus',
 			arity: 2,
 			action: (a: number, b: number) => a + b,
 			representation: '+',
 		});
 		this.operations.push({
-			id: operationId.minus,
+			id: OperationId.minus,
 			bittonId: 'btn_minus',
 			arity: 2,
 			action: (a: number, b: number) => a - b,
 			representation: '-',
 		});
 		this.operations.push({
-			id: operationId.multiply,
+			id: OperationId.multiply,
 			bittonId: 'btn_multiply',
 			arity: 2,
 			action: (a: number, b: number) => a * b,
 			representation: '×',
 		});
 		this.operations.push({
-			id: operationId.divide,
+			id: OperationId.divide,
 			bittonId: 'btn_divide',
 			arity: 2,
 			action: (a: number, b: number) => a / b,
 			representation: '/',
 		});
 		this.operations.push({
-			id: operationId.pow,
+			id: OperationId.pow,
 			bittonId: 'btn_pow',
 			arity: 2,
 			action: (a: number, b: number) => a ** b,
 			representation: '^',
 		});
 		this.operations.push({
-			id: operationId.sqrt,
+			id: OperationId.sqrt,
 			bittonId: 'btn_sqrt',
 			arity: 1,
 			action: (a: number) => Math.sqrt(a),
 			representation: '√',
 		});
 		this.operations.push({
-			id: operationId.percent,
+			id: OperationId.percent,
 			bittonId: 'btn_percent',
 			arity: 1,
 			action: (a: number) => a / 100,
 			representation: '%',
 		});
 		this.operations.push({
-			id: operationId.sin,
+			id: OperationId.sin,
 			bittonId: 'btn_sin',
 			arity: 1,
 			action: (a: number) => Math.sin(a),
 			representation: 'sin',
 		});
 		this.operations.push({
-			id: operationId.cos,
+			id: OperationId.cos,
 			bittonId: 'btn_cos',
 			arity: 1,
 			action: (a: number) => Math.cos(a),
 			representation: 'cos',
 		});
 		this.operations.push({
-			id: operationId.asin,
+			id: OperationId.asin,
 			bittonId: 'btn_asin',
 			arity: 1,
 			action: (a: number) => Math.asin(a),
 			representation: 'asin',
 		});
 		this.operations.push({
-			id: operationId.acos,
+			id: OperationId.acos,
 			bittonId: 'btn_acos',
 			arity: 1,
 			action: (a: number) => Math.acos(a),
 			representation: 'acos',
 		});
 		this.operations.push({
-			id: operationId.log,
+			id: OperationId.log,
 			bittonId: 'btn_log',
 			arity: 1,
 			action: (a: number) => Math.log(a),
 			representation: 'log',
 		});
 		this.operations.push({
-			id: operationId.oneDivX,
+			id: OperationId.oneDivX,
 			bittonId: 'btn_oneDivX',
 			arity: 1,
 			action: (a: number) => 1 / a,
 			representation: '1/',
 		});
-		this.operations.forEach((el: operationInterface) => {
+		this.operations.forEach((el: OperationInterface) => {
 			this.addInputToButtonClick(el.bittonId, el.id);
 		});
 	},
